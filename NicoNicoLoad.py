@@ -1,31 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
+import os, subprocess
+
 from requests import Session
 from twitter import Twitter, OAuth
+
+from mutagen.mp3 import MP3
+from mutagen.id3 import ID3, APIC, TIT2, TPE1, TRCK, TALB, USLT
 
 class NicoNicoLoad:
 
     CHUNK_SIZE = 1024
     corrections = {
-        "names":
-            [u"1-6 -out of the gravity-",
-             u"World - Lampshade",
-             u"Heart \' Palette",
-             u"Re-flection",
-             u"\'Hello, Planet",
-             u"Vaicarious",
-             u"The Flower of Raison d\'Etre"],
-        "titles":
-            [u"1/6 -out of the gravity-",
-             u"World·Lampshade",
-             u"Heart＊Palette",
-             u"Re:flection",
-             u"*Hello, Planet",
-             u"√aicarious",
-             u"The Flower of Raison d\'Être"]
-    }
+        u"1-6 -out of the gravity-" : u"1/6 -out of the gravity-",
+        u"World - Lampshade" : u"World·Lampshade",
+        u"Heart \' Palette" : u"Heart＊Palette",
+        u"Re-flection" : u"Re:flection",
+        u"\'Hello, Planet" : u"*Hello, Planet",
+        u"Vaicarious" : u"√aicarious",
+        u"The Flower of Raison d\'Etre" : u"The Flower of Raison d\'Être"}
 
     def __init__(self, username, songs_count, oat, oats, ak, asecret):
         self.username = username
@@ -55,10 +49,39 @@ class NicoNicoLoad:
             raise Exception("Already downloaded!")
 
     def videoConverter(self, to_convert):
-        pass
+        for filename in to_convert:
+            if not os.path.isfile("./Music/" + filename + ".mp3"):
+                subprocess.run("ffmpeg -i ./Video/\"" + filename + ".mp4\" "
+                               "-vn ./Music/\"" + filename + ".mp3\""
+                               ">/dev/null 2>&1",
+                               shell = True)
+            else:
+                print("Already converted!")
+
 
     def tagEditor(self, to_tag):
-        pass
+        for name in to_tag:
+            mp3 = MP3("./Music/" + name + ".mp3")
+            if mp3.tags == None:
+                mp3.add_tags()
+            name = name.split("] ")
+            artists = name[0]
+            title = name[1]
+            artists = artists[1:].replace(" feat.",
+                                          ";").replace(" &",
+                                                       ";").replace("'",
+                                                                    "*")
+
+            try:
+                title = self.corrections[title]
+                print("corretto nome!")
+            except KeyError:
+                pass
+
+            mp3.tags.add(TIT2(encoding=3, text=title))
+            mp3.tags.add(TALB(encoding=3, text=u"Vocaloid"))
+            mp3.tags.add(TPE1(encoding=3, text=artists))
+            mp3.save(v1=2)
 
     def start(self):
         tweets = self.api.statuses.user_timeline(screen_name = self.username,
