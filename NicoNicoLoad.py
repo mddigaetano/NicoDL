@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, urllib3
+import os
+from requests import Session
 from twitter import Twitter, OAuth
 
 class NicoNicoLoad:
@@ -31,30 +32,25 @@ class NicoNicoLoad:
         self.songs_count = songs_count
 
         self.api = Twitter(auth = OAuth(oat, oats, ak, asecret))
-        self.http = urllib3.PoolManager()
+        self.http = Session()
 
     def linkExtractor(self, song_id):
-        request = self.http.request('GET',
-                                    'http://www.nicovideo.jp/watch/' + song_id)
-        page = request.data.decode('utf-8')
-        index = page.find("smileInfo&quot;:{&quot;url&quot;:&quot;http:") + 39
+        page = self.http.get('http://www.nicovideo.jp/watch/' + song_id)
+        page = page.text
+        index = page.find(u"smileInfo&quot;:{&quot;url&quot;:&quot;http:") + 39
         videoLink = page[index : page.find("&quot;", index)]
         return videoLink.replace("\\", "")
 
     def videoDownloader(self, filename, song_id):
         if not os.path.isfile("./Video/"+filename+".mp4"):
-            url = linkExtractor("http://www.nicovideo.jp/watch/" + song_id)
+            url = self.linkExtractor(song_id)
             if(url[-3:] == "low"):
                 raise Exception("Low quality video!")
 
-            request = http.request('GET', url, preload_content=False)
-            with open( "./Video/\"" + filename + ".mp4\"", 'wb') as download:
-                while True:
-                    data = r.read(CHUNK_SIZE)
-                    if not data:
-                        break
-                    out.write(data)
-            request.release_conn()
+            request = self.http.get(url, stream = True)
+            with open( "./Video/" + filename + ".mp4", 'wb') as download:
+                for chunk in request.iter_content(chunk_size=self.CHUNK_SIZE):
+                    download.write(chunk)
         else:
             raise Exception("Already downloaded!")
 
@@ -66,34 +62,33 @@ class NicoNicoLoad:
 
     def start(self):
         tweets = self.api.statuses.user_timeline(screen_name = self.username,
-                                                 count = self.count)
+                                                 count = self.songs_count)
         to_convert = []
         for tweet in tweets:
-            split = tweet.text.split(" https")
+            split = tweet['text'].split(" https")
             if len(split) == 1:
-                split = tweet.text.split(" #sm")
+                split = tweet['text'].split(" #sm")
             filename = split[0].replace("&amp;", "&")
-            song_id = tweet.hashtags[0].text
+            song_id = tweet['entities']['hashtags'][0]['text']
 
             try:
-                videoDownloader(filename, song_id)
+                self.videoDownloader(filename, song_id)
                 to_convert.append(filename)
-            except:
-                pass
+            except Exception as e:
+                print(str(e) + " " + filename)
 
-        videoConverter(to_convert)
-        tag_editor(to_convert)
-
+        self.videoConverter(to_convert)
+        self.tagEditor(to_convert)
 
 if __name__ == "__main__":
     username = os.environ['TWITTER_USERNAME']
     songs_count = os.environ['SONGS_COUNT']
 
-    ak = os.environ['APP_KEY']
-    asecret = os.environ['APP_SECRET']
     oat = os.environ['OAUTH_TOKEN']
     oats = os.environ['OAUTH_TOKEN_SECRET']
+    ak = os.environ['APP_KEY']
+    asecret = os.environ['APP_SECRET']
 
-    nnl = NicoNicoLoad(username, songs_count, ak, asecret, oat, oats)
+    nnl = NicoNicoLoad(username, songs_count, oat, oats, ak, asecret)
     nnl.start()
 
