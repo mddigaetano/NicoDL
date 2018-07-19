@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import os, urllib3
 from twitter import Twitter, OAuth
 
 class NicoNicoLoad:
+
+    CHUNK_SIZE = 1024
     corrections = {
         "names":
             [u"1-6 -out of the gravity-",
@@ -38,33 +41,48 @@ class NicoNicoLoad:
         videoLink = page[index : page.find("&quot;", index)]
         return videoLink.replace("\\", "")
 
-    """
-    def tweetAnalyzer(self):
-        tweets = self.api.statuses.user_timeline(screen_name = self.username,
-                                                 count = self.count)
-
-        split = s.text.split(" https")
-        filename = split[0].replace("&amp;", "&")
-        song_id = s.hashtags[0].text
-    """
-
     def videoDownloader(self, filename, song_id):
+        if not os.path.isfile("./Video/"+filename+".mp4"):
+            url = linkExtractor("http://www.nicovideo.jp/watch/" + song_id)
+            if(url[-3:] == "low"):
+                raise Exception("Low quality video!")
 
-    def videoConverter(self):
+            request = http.request('GET', url, preload_content=False)
+            with open( "./Video/\"" + filename + ".mp4\"", 'wb') as download:
+                while True:
+                    data = r.read(CHUNK_SIZE)
+                    if not data:
+                        break
+                    out.write(data)
+            request.release_conn()
+        else:
+            raise Exception("Already downloaded!")
+
+    def videoConverter(self, to_convert):
         pass
 
-    def tagEditor(self):
+    def tagEditor(self, to_tag):
         pass
 
     def start(self):
         tweets = self.api.statuses.user_timeline(screen_name = self.username,
                                                  count = self.count)
+        to_convert = []
         for tweet in tweets:
             split = tweet.text.split(" https")
             if len(split) == 1:
                 split = tweet.text.split(" #sm")
             filename = split[0].replace("&amp;", "&")
             song_id = tweet.hashtags[0].text
+
+            try:
+                videoDownloader(filename, song_id)
+                to_convert.append(filename)
+            except:
+                pass
+
+        videoConverter(to_convert)
+        tag_editor(to_convert)
 
 
 if __name__ == "__main__":
