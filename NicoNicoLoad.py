@@ -74,7 +74,6 @@ class NicoNicoLoad:
 
             try:
                 title = self.corrections[title]
-                print("corretto nome!")
             except KeyError:
                 pass
 
