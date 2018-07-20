@@ -21,8 +21,8 @@ To run the container with docker just copy:
 ```sh
 docker run -it --rm \
      --name niconicontainer \
-     --mount type=bind,source=(pwd)/Music,target=/app/Music \
-     --mount type=bind,source=(pwd)/Video,target=/app/Video \
+     --mount type=bind,source="$(pwd)"/Music,target=/app/Music \
+     --mount type=bind,source="$(pwd)"/Video,target=/app/Video \
      -e TWITTER_USERNAME=<your_twitter_id> \
      -e SONGS_COUNT=<how_many_songs_to_download> \
      -e OAUTH_TOKEN=<your_token> \
