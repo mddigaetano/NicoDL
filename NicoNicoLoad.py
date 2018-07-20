@@ -104,7 +104,7 @@ class NicoNicoLoad:
 
 if __name__ == "__main__":
     username = os.environ['TWITTER_USERNAME']
-    songs_count = os.environ['SONGS_COUNT']
+    songs_count = int(os.environ['SONGS_COUNT'])
 
     oat = os.environ['OAUTH_TOKEN']
     oats = os.environ['OAUTH_TOKEN_SECRET']
