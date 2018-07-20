@@ -9,6 +9,7 @@ The script is made of several steps:
     1. then, it opens the video link and starts the download
 1. creates the mp3
    1. to do so, the script calls `ffmpeg` to convert the video
+   1. if the song title is not the one you want thanks to OS constraints in naming files, the `corrections` dict switches it
    1. finally, it sets the right mp3 tags, with `Vocaloid` as album entry
 
 Every tweet is written following a specific format:
@@ -18,7 +19,7 @@ where the http link is optional and the hashtag is the video id.
 ## Run from Docker
 To run the container with docker just copy:
 ```sh
-docker run -it \
+docker run -it --rm \
      --name niconicontainer \
      --mount type=bind,source=(pwd)/Music,target=/app/Music \
      --mount type=bind,source=(pwd)/Video,target=/app/Video \
@@ -47,4 +48,4 @@ If you want to build the docker image, `cd` into the repo and type:
 docker build -t niconicoload .
 ```
 
-If you just want to use the script without a container, install the dependencies and run the script.  
+If you just want to use the script without a container, install the python dependencies and ffmpeg and run the script.  

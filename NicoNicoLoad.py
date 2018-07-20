@@ -7,7 +7,7 @@ from requests import Session
 from twitter import Twitter, OAuth
 
 from mutagen.mp3 import MP3
-from mutagen.id3 import ID3, APIC, TIT2, TPE1, TRCK, TALB, USLT
+from mutagen.id3 import TIT2, TPE1, TALB
 
 class NicoNicoLoad:
 
