@@ -13,7 +13,7 @@ The script is made of several steps:
    1. finally, it sets the right mp3 tags, with `Vocaloid` as album entry
 
 Every tweet is written following a specific format:
-* `\[author 1 & author 2 & ... & final author feat. vocalist 1 & ... & final vocalist\] song title http://link.to.song \#smXXXXX`  
+* `[author 1 & author 2 & ... & final author feat. vocalist 1 & ... & final vocalist] song title http://link.to.song #smXXXXX`  
 where the http link is optional and the hashtag is the video id.
 
 ## Run from Docker
