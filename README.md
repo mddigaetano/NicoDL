@@ -29,7 +29,7 @@ docker run -it --rm \
      -e OAUTH_TOKEN_SECRET=<your_token> \
      -e APP_KEY=<your_token> \
      -e APP_SECRET=<your_token> \
-     mddigaetano/niconicoload:v1.0
+     mddigaetano/niconicoload
 ```
 where:
 * `OAUTH_TOKEN`
