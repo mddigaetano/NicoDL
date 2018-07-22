@@ -1,4 +1,4 @@
-# NicoDL
+# NicoNicoLoad
 Python script that lets you download Videos from NicoNico
 
 ## About
