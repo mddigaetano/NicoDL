@@ -11,8 +11,5 @@ RUN apk update \
 
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
-RUN mkdir Music \
-    && mkdir Video
-
 ENTRYPOINT ["python", "NicoNicoLoad.py"]
 
