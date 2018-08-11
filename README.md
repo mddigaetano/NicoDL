@@ -29,6 +29,8 @@ docker run -it --rm \
      -e OAUTH_TOKEN_SECRET=<your_token> \
      -e APP_KEY=<your_token> \
      -e APP_SECRET=<your_token> \
+     -e NICONICO_USERNAME=<your_niconico_username> \
+     -e NICONICO_PASSWORD=<your_niconico_password> \
      mddigaetano/niconicoload
 ```
 where:
@@ -36,7 +38,10 @@ where:
 * `OAUTH_TOKEN_SECRET`
 * `APP_KEY`
 * `APP_SECRET`  
-are the four tokens the Twitter API needs (the app just needs read-only permissions).
+are the four tokens the Twitter API needs (the app just needs read-only permissions), and:
+* `NICONICO_USERNAME`
+* `NICONICO_PASSWORD`
+are your niconico credentials, needed for some videos.
 
 If you want to run it in detached mode just type `-d` instead of `-it`  
 To change the location of the downloaded videos and converted songs edit the `source=` parameters after `--mount`  

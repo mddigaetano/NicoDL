@@ -1,6 +1,10 @@
 Dockerfile
 .dockerignore
-README.md
 
+.git/
+.gitignore
+
+README.md
+LICENSE
 Music/*
 Video/*

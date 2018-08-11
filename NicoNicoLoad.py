@@ -23,12 +23,20 @@ class NicoNicoLoad:
         u"Vaicarious": u"√aicarious",
         u"The Flower of Raison d\'Etre": u"The Flower of Raison d\'Être"}
 
-    def __init__(self, username, songs_count, oat, oats, ak, asecret):
+    def __init__(self, username, songs_count, oat, oats, ak, asecret, nicouser, nicopass):
         self.username = username
         self.songs_count = songs_count
 
         self.api = Twitter(auth=OAuth(oat, oats, ak, asecret))
         self.http = Session()
+        self.nicoLogin(nicouser, nicopass)
+
+    def nicoLogin(self, username, password):
+        payload = {
+            'mail_tel': username,
+            'password': password
+        }
+        self.http.post('https://account.nicovideo.jp/login', data=payload)
 
     def linkExtractor(self, song_id):
         page = self.http.get('http://www.nicovideo.jp/watch/' + song_id)
@@ -109,5 +117,8 @@ if __name__ == "__main__":
     ak = os.environ['APP_KEY']
     asecret = os.environ['APP_SECRET']
 
-    nnl = NicoNicoLoad(username, songs_count, oat, oats, ak, asecret)
+    nicouser = os.environ['NICONICO_USERNAME']
+    nicopass = os.environ['NICONICO_PASSWORD']
+
+    nnl = NicoNicoLoad(username, songs_count, oat, oats, ak, asecret, nicouser, nicopass)
     nnl.start()
