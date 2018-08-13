@@ -14,6 +14,9 @@ from mutagen.id3 import TIT2, TPE1, TALB
 class NicoNicoLoad:
 
     CHUNK_SIZE = 1024
+    NICONICO_LOGIN_URL = "https://secure.nicovideo.jp/secure/login?site=niconico"
+    NICONICO_BASE_VIDEO_URL = "http://www.nicovideo.jp/watch/"
+
     corrections = {
         u"1-6 -out of the gravity-": u"1/6 -out of the gravity-",
         u"World - Lampshade": u"World·Lampshade",
@@ -36,12 +39,14 @@ class NicoNicoLoad:
             'mail_tel': username,
             'password': password
         }
-        self.http.post('https://account.nicovideo.jp/login', data=payload)
+        self.http.post(NICONICO_LOGIN_URL, data=payload)
 
     def linkExtractor(self, song_id):
-        page = self.http.get('http://www.nicovideo.jp/watch/' + song_id)
+        page = self.http.get(NICONICO_BASE_VIDEO_URL + song_id)
         page = page.text
         index = page.find("smileInfo&quot;:{&quot;url&quot;:&quot;http:") + 39
+        if index < 39:
+            raise Exception("Could not retrieve video link!")
         videoLink = page[index: page.find("&quot;", index)].replace("\\", "")
         if videoLink[-3:] == "low":
             raise Exception("Low quality video!")
