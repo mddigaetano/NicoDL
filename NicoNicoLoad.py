@@ -39,10 +39,10 @@ class NicoNicoLoad:
             'mail_tel': username,
             'password': password
         }
-        self.http.post(NICONICO_LOGIN_URL, data=payload)
+        self.http.post(self.NICONICO_LOGIN_URL, data=payload)
 
     def linkExtractor(self, song_id):
-        page = self.http.get(NICONICO_BASE_VIDEO_URL + song_id)
+        page = self.http.get(self.NICONICO_BASE_VIDEO_URL + song_id)
         page = page.text
         index = page.find("smileInfo&quot;:{&quot;url&quot;:&quot;http:") + 39
         if index < 39:
