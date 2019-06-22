@@ -44,7 +44,7 @@ class NicoNicoLoad:
     def linkExtractor(self, song_id):
         page = self.http.get(self.NICONICO_BASE_VIDEO_URL + song_id)
         page = page.text
-        index = page.find("smileInfo&quot;:{&quot;url&quot;:&quot;http:") + 39
+        index = page.find("smileInfo&quot;:{&quot;url&quot;:&quot;https:") + 40
         if index < 39:
             raise Exception("Could not retrieve video link!")
         videoLink = page[index: page.find("&quot;", index)].replace("\\", "")
